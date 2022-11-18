@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "/pyraminx/static/css/main.f0cf4dc5.css",
-    "main.js": "/pyraminx/static/js/main.14cea356.js",
-    "static/js/787.26dfca0a.chunk.js": "/pyraminx/static/js/787.26dfca0a.chunk.js",
-    "service-worker.js": "/pyraminx/service-worker.js",
-    "index.html": "/pyraminx/index.html",
-    "main.f0cf4dc5.css.map": "/pyraminx/static/css/main.f0cf4dc5.css.map",
-    "main.14cea356.js.map": "/pyraminx/static/js/main.14cea356.js.map",
-    "787.26dfca0a.chunk.js.map": "/pyraminx/static/js/787.26dfca0a.chunk.js.map"
+    "main.css": "/Pyraminx/static/css/main.f0cf4dc5.css",
+    "main.js": "/Pyraminx/static/js/main.b0eca1bb.js",
+    "static/js/787.26dfca0a.chunk.js": "/Pyraminx/static/js/787.26dfca0a.chunk.js",
+    "service-worker.js": "/Pyraminx/service-worker.js",
+    "index.html": "/Pyraminx/index.html",
+    "main.f0cf4dc5.css.map": "/Pyraminx/static/css/main.f0cf4dc5.css.map",
+    "main.b0eca1bb.js.map": "/Pyraminx/static/js/main.b0eca1bb.js.map",
+    "787.26dfca0a.chunk.js.map": "/Pyraminx/static/js/787.26dfca0a.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.f0cf4dc5.css",
-    "static/js/main.14cea356.js"
+    "static/js/main.b0eca1bb.js"
   ]
 }
