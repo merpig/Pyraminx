@@ -1,0 +1,15 @@
+.instructions{
+    display: flex 1;
+    top: 80px;
+    right: 8px;
+    border: 2px solid blue;
+    border-radius: .25rem;
+}
+
+.i-lines{
+    color: lightgrey
+}
+
+a{
+    pointer-events: inherit;
+}
