@@ -255,7 +255,7 @@ const PyraMinx = ({reset}) => {
         }
     });
 
-    function triangleMesh(n,translate,rotate,color,name,i){
+    function triangleMesh(n,translate,rotateX,rotateY,color,name,i){
         let triangleMesh, triangleMesh2;
         const lineWidth = .97;
         n=n?n:1;
@@ -280,23 +280,51 @@ const PyraMinx = ({reset}) => {
             depthWrite: true,
         });
         const material2 = new THREE.MeshBasicMaterial({
-            color: "green",
+            color,
             side: THREE.FrontSide,
             depthWrite: true,
         });
 
         let offsetZ =.005;
+        let translateReset = 2.78;
 
         
         triangleMesh = new THREE.Mesh(geometry,material);
         triangleMesh2 = new THREE.Mesh(geometry2,material2);
+
+
+
+        triangleMesh.translateZ(-n/translateReset);
+        triangleMesh2.translateZ(-n/translateReset);
+
+        triangleMesh.rotateY(dToR(rotateY)||0);
+        triangleMesh2.rotateY(dToR(rotateY)||0);
+
+        triangleMesh.rotateX(dToR(rotateX)||0);
+        triangleMesh2.rotateX(dToR(rotateX)||0);
+
+        // triangleMesh.translateY(n/2);
+        // triangleMesh2.translateY(n/2);
+
+        triangleMesh.translateZ(n/translateReset);
+        triangleMesh2.translateZ(n/translateReset);
 
         triangleMesh2.translateZ(offsetZ);
 
         scene.add(triangleMesh,triangleMesh2);
     }
 
-    triangleMesh(1);
+    // type: corner, edge, center
+    const pyraPiece = (x,y,z,type) => {
+        const tilt = -19.4;
+        triangleMesh(1,0,90,0,"yellow");
+        triangleMesh(1,0,tilt,60,"red");
+        triangleMesh(1,0,tilt,180,"green");
+        triangleMesh(1,0,tilt,300,"blue");
+    }
+
+    pyraPiece(0,0,0);
+
 
     const loader = new THREE.TextureLoader();
     const right = loader.load(rightArrow);
