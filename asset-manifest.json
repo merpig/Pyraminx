@@ -1,16 +1,16 @@
 {
   "files": {
     "main.css": "/Pyraminx/static/css/main.f0cf4dc5.css",
-    "main.js": "/Pyraminx/static/js/main.b0eca1bb.js",
+    "main.js": "/Pyraminx/static/js/main.94170f3d.js",
     "static/js/787.26dfca0a.chunk.js": "/Pyraminx/static/js/787.26dfca0a.chunk.js",
     "service-worker.js": "/Pyraminx/service-worker.js",
     "index.html": "/Pyraminx/index.html",
     "main.f0cf4dc5.css.map": "/Pyraminx/static/css/main.f0cf4dc5.css.map",
-    "main.b0eca1bb.js.map": "/Pyraminx/static/js/main.b0eca1bb.js.map",
+    "main.94170f3d.js.map": "/Pyraminx/static/js/main.94170f3d.js.map",
     "787.26dfca0a.chunk.js.map": "/Pyraminx/static/js/787.26dfca0a.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.f0cf4dc5.css",
-    "static/js/main.b0eca1bb.js"
+    "static/js/main.94170f3d.js"
   ]
 }
