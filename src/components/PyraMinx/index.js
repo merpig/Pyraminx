@@ -255,9 +255,12 @@ const PyraMinx = ({reset}) => {
         }
     });
 
-    function triangleMesh(n,translate,rotateX,rotateY,color,name,i){
+    const tetraHeight = Math.sqrt(2/3) * 1.732;
+    const tetraCenter = tetraHeight - Math.sqrt(3/8)*1.732;
+
+    function triangleMesh(n,initX,initY,initRotateY,rotateX,rotateY,color,name){
         let triangleMesh, triangleMesh2;
-        const lineWidth = .97;
+        const lineWidth = .9;
         n=n?n:1;
 
         const triangle = new THREE.Shape();
@@ -286,16 +289,25 @@ const PyraMinx = ({reset}) => {
         });
 
         let offsetZ =.005;
-        let translateReset = 2.78;
-
         
         triangleMesh = new THREE.Mesh(geometry,material);
         triangleMesh2 = new THREE.Mesh(geometry2,material2);
 
+        let val=0;
+        // initial placement
+        initRotateY?triangleMesh.rotateY(dToR(initRotateY)):val=0;
+        initY?triangleMesh.translateY(initY):val=0;
+        initX?triangleMesh.translateZ(initX):val=0;
 
+        initRotateY?triangleMesh2.rotateY(dToR(initRotateY)):val=0;
+        initY?triangleMesh2.translateY(initY):val=0;
+        initX?triangleMesh2.translateZ(initX):val=0;
 
-        triangleMesh.translateZ(-n/translateReset);
-        triangleMesh2.translateZ(-n/translateReset);
+        // translate to position at piece center
+        triangleMesh.translateY(-1);
+        triangleMesh2.translateY(-1);
+        triangleMesh.translateY(tetraCenter);
+        triangleMesh2.translateY(tetraCenter);
 
         triangleMesh.rotateY(dToR(rotateY)||0);
         triangleMesh2.rotateY(dToR(rotateY)||0);
@@ -303,27 +315,38 @@ const PyraMinx = ({reset}) => {
         triangleMesh.rotateX(dToR(rotateX)||0);
         triangleMesh2.rotateX(dToR(rotateX)||0);
 
-        // triangleMesh.translateY(n/2);
-        // triangleMesh2.translateY(n/2);
+        // translate to reposition from piece center
+        triangleMesh.translateZ(tetraCenter);
+        triangleMesh2.translateZ(tetraCenter);
 
-        triangleMesh.translateZ(n/translateReset);
-        triangleMesh2.translateZ(n/translateReset);
-
+        //Pushes sticker face out so it's visible from the black sticker
         triangleMesh2.translateZ(offsetZ);
 
-        scene.add(triangleMesh,triangleMesh2);
+        scene.add(triangleMesh, triangleMesh2);
     }
 
     // type: corner, edge, center
-    const pyraPiece = (x,y,z,type) => {
+    const pyraPiece = (initX,initY,initRotateY,type,colors) => {
+        const baseTilt = 90;
         const tilt = -19.4;
-        triangleMesh(1,0,90,0,"yellow");
-        triangleMesh(1,0,tilt,60,"red");
-        triangleMesh(1,0,tilt,180,"green");
-        triangleMesh(1,0,tilt,300,"blue");
+        if(colors[0]) triangleMesh(1,initX,initY,initRotateY,baseTilt,0,colors[0],type);
+        if(colors[1]) triangleMesh(1,initX,initY,initRotateY,tilt,60,colors[1],type);
+        if(colors[2]) triangleMesh(1,initX,initY,initRotateY,tilt,180,colors[2],type);
+        if(colors[3]) triangleMesh(1,initX,initY,initRotateY,tilt,300,colors[3],type);
     }
 
-    pyraPiece(0,0,0);
+
+    
+
+    pyraPiece(0,tetraHeight,0,"corner",[null,"red","green","blue"]);
+
+    pyraPiece(1,0,0,"edge",[null,"red",null,"blue"]);
+    pyraPiece(1,0,120,"edge",[null,"green",null,"red"]);
+    pyraPiece(1,0,240,"edge",[null,"blue",null,"green"]);
+
+    pyraPiece(2,-tetraHeight,0,"corner",["yellow","red",null,"blue"]);
+    pyraPiece(2,-tetraHeight,120,"corner",["yellow","green",null,"red"]);
+    pyraPiece(2,-tetraHeight,240,"corner",["yellow","blue",null,"green"]);
 
 
     const loader = new THREE.TextureLoader();
