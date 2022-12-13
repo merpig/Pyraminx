@@ -6,9 +6,17 @@ import "./index.css"
 import Menu from "../Menu/Menu";
 import rightArrow from "./arrow.png";
 import leftArrow from "./leftArrow.png";
+import { seededRandom } from "three/src/math/MathUtils.js";
 
 const PyraMinx = ({reset}) => {
     // Added csc to Math library
+    const scale = 1;
+    const segments = 3;
+    const triangleHeight = 1.5;
+    const tetraEdgeLength = 1.732;
+    const tetraHeight = Math.sqrt(2/3) * tetraEdgeLength;
+    const tetraCenter = tetraHeight - Math.sqrt(3/8)*tetraEdgeLength;
+
     Math.csc = function(x) { return 1 / Math.sin(x); }
 
     // UI and megaminx controller variables
@@ -125,7 +133,7 @@ const PyraMinx = ({reset}) => {
     let getCpVars = () => {return {camera,mouse,raycaster,scene};}
 
     // Holds references to all the rendered pieces
-    let pyraObject = {};
+    let pyraObject = {up:[],front:[],right:[],left:[]};
     let rightHints = {};
     let leftHints = {};
 
@@ -135,10 +143,15 @@ const PyraMinx = ({reset}) => {
     renderer.setClearColor(new THREE.Color("black"),0);
     renderer.domElement.className = "canvas";
     renderer.setSize( window.innerWidth, window.innerHeight);
-
-    camera.position.z = 15;
+    
+    // camera.lookAt(new THREE.Vector3(0,(segments*tetraHeight)/2,0));
+    camera.position.z = segments*tetraHeight*3;
     camera.position.y = 0;
     camera.position.x = 0;
+    camera.translateY(segments*tetraHeight/2)
+    camera.lookAt(new THREE.Vector3(0,segments/2),0)
+    
+    // camera.translateY((segments*tetraHeight))
 
     renderer.render( scene, camera );
 
@@ -255,10 +268,12 @@ const PyraMinx = ({reset}) => {
         }
     });
 
-    const tetraHeight = Math.sqrt(2/3) * 1.732;
-    const tetraCenter = tetraHeight - Math.sqrt(3/8)*1.732;
+    
+    // const top = Math.floor(segments/2)
+    // const bottom = -1*(Math.ceil(segments/2)-1)
+    
 
-    function triangleMesh(n,initX,initY,initRotateY,rotateX,rotateY,color,name){
+    function triangleMesh(n,initX,initZ,initY,initRotateY,rotateX,rotateY,color,name,upSideDown,orientation,layer){
         let triangleMesh, triangleMesh2;
         const lineWidth = .9;
         n=n?n:1;
@@ -266,13 +281,24 @@ const PyraMinx = ({reset}) => {
         const triangle = new THREE.Shape();
         const triangle2 = new THREE.Shape();
 
-        triangle.moveTo(0, 1*n);
-        triangle.lineTo(...rotate_point(0,0,120,{x:0,y: 1*n}));
-        triangle.lineTo(...rotate_point(0,0,240,{x:0,y:1*n}));
-
-        triangle2.moveTo(0, 1*n*lineWidth);
-        triangle2.lineTo(...rotate_point(0,0,120,{x: 0,y: (1*n)*lineWidth}));
-        triangle2.lineTo(...rotate_point(0,0,240,{x:0,y: (1*n)*lineWidth}));
+        if(upSideDown){
+            triangle.moveTo(...rotate_point(0,0,60,{x: 0,y: (1*n)}));
+            triangle.lineTo(...rotate_point(0,0,180,{x: 0,y: (1*n)}));
+            triangle.lineTo(...rotate_point(0,0,300,{x:0,y: (1*n)}));
+    
+            triangle2.moveTo(...rotate_point(0,0,60,{x: 0,y: (1*n)*lineWidth}));
+            triangle2.lineTo(...rotate_point(0,0,180,{x: 0,y: (1*n)*lineWidth}));
+            triangle2.lineTo(...rotate_point(0,0,300,{x:0,y: (1*n)*lineWidth}));
+        }
+        else {
+            triangle.moveTo(0, 1*n);
+            triangle.lineTo(...rotate_point(0,0,120,{x:0,y: 1*n}));
+            triangle.lineTo(...rotate_point(0,0,240,{x:0,y:1*n}));
+    
+            triangle2.moveTo(0, 1*n*lineWidth);
+            triangle2.lineTo(...rotate_point(0,0,120,{x: 0,y: (1*n)*lineWidth}));
+            triangle2.lineTo(...rotate_point(0,0,240,{x:0,y: (1*n)*lineWidth}));
+        }
 
         const geometry = new THREE.ShapeGeometry(triangle);
         const geometry2 = new THREE.ShapeGeometry(triangle2);
@@ -296,57 +322,66 @@ const PyraMinx = ({reset}) => {
         let val=0;
         // initial placement
         initRotateY?triangleMesh.rotateY(dToR(initRotateY)):val=0;
+        // upSideDown && triangleMesh.translateZ(-triangleHeight/3);
         initY?triangleMesh.translateY(initY):val=0;
-        initX?triangleMesh.translateZ(initX):val=0;
-
+        initZ?triangleMesh.translateZ(initZ):val=0;
+        
         initRotateY?triangleMesh2.rotateY(dToR(initRotateY)):val=0;
+        // upSideDown && triangleMesh2.translateY(triangleHeight/3);
+        
         initY?triangleMesh2.translateY(initY):val=0;
-        initX?triangleMesh2.translateZ(initX):val=0;
-
+        initZ?triangleMesh2.translateZ(initZ):val=0;
+        
         // translate to position at piece center
         triangleMesh.translateY(-1);
         triangleMesh2.translateY(-1);
         triangleMesh.translateY(tetraCenter);
         triangleMesh2.translateY(tetraCenter);
-
+        
         triangleMesh.rotateY(dToR(rotateY)||0);
         triangleMesh2.rotateY(dToR(rotateY)||0);
-
+        
         triangleMesh.rotateX(dToR(rotateX)||0);
         triangleMesh2.rotateX(dToR(rotateX)||0);
-
+        
         // translate to reposition from piece center
         triangleMesh.translateZ(tetraCenter);
         triangleMesh2.translateZ(tetraCenter);
+        
+        if(upSideDown){
+            triangleMesh.translateY((triangleHeight)/3);
+            triangleMesh2.translateY((triangleHeight)/3);
 
+        }
+        initX?triangleMesh.translateX(initX):val=0;
+        initX?triangleMesh2.translateX(initX):val=0;
         //Pushes sticker face out so it's visible from the black sticker
         triangleMesh2.translateZ(offsetZ);
 
+
         scene.add(triangleMesh, triangleMesh2);
     }
-
-    // type: corner, edge, center
-    const pyraPiece = (initX,initY,initRotateY,type,colors) => {
-        const baseTilt = 90;
-        const tilt = -19.4;
-        if(colors[0]) triangleMesh(1,initX,initY,initRotateY,baseTilt,0,colors[0],type);
-        if(colors[1]) triangleMesh(1,initX,initY,initRotateY,tilt,60,colors[1],type);
-        if(colors[2]) triangleMesh(1,initX,initY,initRotateY,tilt,180,colors[2],type);
-        if(colors[3]) triangleMesh(1,initX,initY,initRotateY,tilt,300,colors[3],type);
-    }
-
-
     
-
-    pyraPiece(0,tetraHeight,0,"corner",[null,"red","green","blue"]);
-
-    pyraPiece(1,0,0,"edge",[null,"red",null,"blue"]);
-    pyraPiece(1,0,120,"edge",[null,"green",null,"red"]);
-    pyraPiece(1,0,240,"edge",[null,"blue",null,"green"]);
-
-    pyraPiece(2,-tetraHeight,0,"corner",["yellow","red",null,"blue"]);
-    pyraPiece(2,-tetraHeight,120,"corner",["yellow","green",null,"red"]);
-    pyraPiece(2,-tetraHeight,240,"corner",["yellow","blue",null,"green"]);
+    // *** values for reference, definied above ***
+    // const scale = 1;
+    // const segments = 5;
+    // const triangleHeight = 1.5;
+    // const tetraEdgeLength = 1.732;
+    // const tetraHeight = Math.sqrt(2/3) * tetraEdgeLength;
+    // const tetraCenter = tetraHeight - Math.sqrt(3/8)*tetraEdgeLength;
+    for(let i = segments; i > 0; i--){
+        const stickersPerRow = (((segments-i)+1)*2)-1;
+        const layer = segments-i;
+        console.log("cols: "+stickersPerRow);
+        for(let j = stickersPerRow; j>0; j--){
+            const stickerOffset = j*.5-.5;
+            const upSideDown = !(parseInt(stickerOffset) === stickerOffset);
+            triangleMesh(scale,-tetraEdgeLength*stickerOffset,layer,tetraHeight*(i),0,-19.4,300,"blue","corner",upSideDown,"up",1);
+            triangleMesh(scale,-tetraEdgeLength*stickerOffset,layer,tetraHeight*(i),120,-19.4,300,"red","corner",upSideDown,"up",1);
+            triangleMesh(scale,-tetraEdgeLength*stickerOffset,layer,tetraHeight*(i),240,-19.4,300,"yellow","corner",upSideDown,"up",1);
+            triangleMesh(scale,-tetraEdgeLength*stickerOffset-(-tetraEdgeLength*(stickersPerRow*.5-.5))/2,i-1-layer*.5,tetraHeight,0,90,0,"green","corner",upSideDown,"up",1);
+        }
+    }
 
 
     const loader = new THREE.TextureLoader();

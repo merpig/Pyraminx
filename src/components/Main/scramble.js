@@ -9,11 +9,12 @@ const scramble = () => {
         const lastIndex = moves.length-1;
         const secondToLastIndex = moves.length-2;
 
-        let randomFace = Math.floor(Math.random() * 12)+1;
+        let randomFace = Math.floor(Math.random() * 4)+1;
+        let randomDepth = Math.floor(Math.random()*3)+1;
         let randomDir  = Math.floor(Math.random() * 2);
 
-        let move = `${randomFace}${randomDir?"":"'"}`;
-        let inverse = `${randomFace}${randomDir?"'":""}`;
+        let move = `${randomFace}_${randomDepth<10?"0"+randomDepth:randomDepth}${randomDir?"":"_'"}`;
+        let inverse = `${randomFace}_${randomDepth<10?"0"+randomDepth:randomDepth}${randomDir?"_'":""}`;
 
         if(inverse===moves[lastIndex]){
             // No move added
@@ -31,6 +32,7 @@ const scramble = () => {
             moves.push(move)
         }
     }
+    console.log(moves);
     return moves;
 }
 
