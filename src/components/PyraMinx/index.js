@@ -258,7 +258,7 @@ const PyraMinx = ({reset}) => {
     const tetraHeight = Math.sqrt(2/3) * 1.732;
     const tetraCenter = tetraHeight - Math.sqrt(3/8)*1.732;
 
-    function triangleMesh(n,initX,initY,initRotateY,rotateX,rotateY,color,name){
+    function triangleMesh(n,initX,initY,initRotateX,initRotateY,rotateX,rotateY,color,name,invert){
         let triangleMesh, triangleMesh2;
         const lineWidth = .9;
         n=n?n:1;
@@ -284,7 +284,7 @@ const PyraMinx = ({reset}) => {
         });
         const material2 = new THREE.MeshBasicMaterial({
             color,
-            side: THREE.FrontSide,
+            side: invert?THREE.BackSide:THREE.FrontSide,
             depthWrite: true,
         });
 
@@ -295,17 +295,22 @@ const PyraMinx = ({reset}) => {
 
         let val=0;
         // initial placement
+        initRotateX?triangleMesh.rotateX(dToR(initRotateX)):val=0;
         initRotateY?triangleMesh.rotateY(dToR(initRotateY)):val=0;
+
         initY?triangleMesh.translateY(initY):val=0;
         initX?triangleMesh.translateZ(initX):val=0;
 
+        initRotateX?triangleMesh2.rotateX(dToR(initRotateX)):val=0;
         initRotateY?triangleMesh2.rotateY(dToR(initRotateY)):val=0;
+
         initY?triangleMesh2.translateY(initY):val=0;
         initX?triangleMesh2.translateZ(initX):val=0;
 
         // translate to position at piece center
         triangleMesh.translateY(-1);
         triangleMesh2.translateY(-1);
+
         triangleMesh.translateY(tetraCenter);
         triangleMesh2.translateY(tetraCenter);
 
@@ -320,33 +325,47 @@ const PyraMinx = ({reset}) => {
         triangleMesh2.translateZ(tetraCenter);
 
         //Pushes sticker face out so it's visible from the black sticker
-        triangleMesh2.translateZ(offsetZ);
+        triangleMesh2.translateZ(invert?-offsetZ:offsetZ);
 
         scene.add(triangleMesh, triangleMesh2);
     }
 
     // type: corner, edge, center
-    const pyraPiece = (initX,initY,initRotateY,type,colors) => {
-        const baseTilt = 90;
-        const tilt = -19.4;
-        if(colors[0]) triangleMesh(1,initX,initY,initRotateY,baseTilt,0,colors[0],type);
-        if(colors[1]) triangleMesh(1,initX,initY,initRotateY,tilt,60,colors[1],type);
-        if(colors[2]) triangleMesh(1,initX,initY,initRotateY,tilt,180,colors[2],type);
-        if(colors[3]) triangleMesh(1,initX,initY,initRotateY,tilt,300,colors[3],type);
-    }
+    // const pyraPiece = (initX,initY,initRotateX,initRotateY,type,colors,invert) => {
+    //     const baseTilt = 90;
+    //     const tilt = -19.4;
+    //     if(colors[0]) triangleMesh(1,initX,initY,initRotateX,initRotateY,baseTilt,0,colors[0],type,invert);
+    //     if(colors[1]) triangleMesh(1,initX,initY,initRotateX,initRotateY,tilt,60,colors[1],type,invert);
+    //     if(colors[2]) triangleMesh(1,initX,initY,initRotateX,initRotateY,tilt,180,colors[2],type,invert);
+    //     if(colors[3]) triangleMesh(1,initX,initY,initRotateX,initRotateY,tilt,300,colors[3],type,invert);
+    // }
 
+    // pyraPiece(0,tetraHeight,0,0,"corner",[null,"red","green","blue"]);
+    // pyraPiece(1,tetraCenter*1.66,180,0,"middle",[null,null,"green",null],true);
+    // pyraPiece(1,tetraCenter*1.66,180,120,"middle",[null,null,"red",null],true);
+    // pyraPiece(1,tetraCenter*1.66,180,240,"middle",[null,null,"blue",null],true);
 
-    
+    // // Middle layer
+    // pyraPiece(1,0,0,0,"edge",[null,"red",null,"blue"]);
+    // pyraPiece(1,0,0,120,"edge",[null,"green",null,"red"]);
+    // pyraPiece(1,0,0,240,"edge",[null,"blue",null,"green"]);
 
-    pyraPiece(0,tetraHeight,0,"corner",[null,"red","green","blue"]);
+    // pyraPiece(2,tetraHeight+tetraCenter*1.66,180,0,"middle",[null,null,"green",null],true);
+    // pyraPiece(2,tetraHeight+tetraCenter*1.66,180,120,"middle",[null,null,"red",null],true);
+    // pyraPiece(2,tetraHeight+tetraCenter*1.66,180,240,"middle",[null,null,"blue",null],true);
 
-    pyraPiece(1,0,0,"edge",[null,"red",null,"blue"]);
-    pyraPiece(1,0,120,"edge",[null,"green",null,"red"]);
-    pyraPiece(1,0,240,"edge",[null,"blue",null,"green"]);
+    // Bottom layer
+    // pyraPiece(2,-tetraHeight,0,0,"corner",["yellow","red",null,"blue"]);
+    // pyraPiece(2,-tetraHeight,0,120,"corner",["yellow","green",null,"red"]);
+    // pyraPiece(2,-tetraHeight,0,240,"corner",["yellow","blue",null,"green"]);
 
-    pyraPiece(2,-tetraHeight,0,"corner",["yellow","red",null,"blue"]);
-    pyraPiece(2,-tetraHeight,120,"corner",["yellow","green",null,"red"]);
-    pyraPiece(2,-tetraHeight,240,"corner",["yellow","blue",null,"green"]);
+    // pyraPiece(-1,-tetraHeight,0,0,"edge",["yellow",null,"green",null]);
+    // pyraPiece(-1,-tetraHeight,0,120,"edge",["yellow",null,"blue",null]);
+    // pyraPiece(-1,-tetraHeight,0,240,"edge",["yellow",null,"red",null]);
+
+    // pyraPiece(-1,-tetraHeight,0,60,"middle",["yellow",null,null,null]);
+    // pyraPiece(-1,-tetraHeight,0,180,"middle",["yellow",null,null,null]);
+    // pyraPiece(-1,-tetraHeight,0,300,"middle",["yellow",null,null,null]);
 
 
     const loader = new THREE.TextureLoader();
