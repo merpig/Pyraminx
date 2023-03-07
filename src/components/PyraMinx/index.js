@@ -10,7 +10,7 @@ import { seededRandom } from "three/src/math/MathUtils.js";
 
 const PyraMinx = ({reset}) => {
     // Added csc to Math library
-    const segments = 3;
+    const segments = 5;
     const scale = 3/segments;
     const triangleHeight = 1.5*scale;
     const tetraEdgeLength = 1.732*scale;
@@ -133,7 +133,7 @@ const PyraMinx = ({reset}) => {
     let getCpVars = () => {return {camera,mouse,raycaster,scene};}
 
     // Holds references to all the rendered pieces
-    let pyraObject = {up:[],front:[],right:[],left:[]};
+    let pyraObject = [];
     let rightHints = {};
     let leftHints = {};
 
@@ -380,10 +380,40 @@ const PyraMinx = ({reset}) => {
         for(let j = stickersPerRow; j>0; j--){
             const stickerOffset = j*.5-.5;
             const upSideDown = !(parseInt(stickerOffset) === stickerOffset);
-            triangleMesh(scale,-tetraEdgeLength*stickerOffset,layer,tetraHeight*(i),0,-19.4,300,"blue","corner",upSideDown,"up",1);
-            triangleMesh(scale,-tetraEdgeLength*stickerOffset,layer,tetraHeight*(i),120,-19.4,300,"red","corner",upSideDown,"up",1);
-            triangleMesh(scale,-tetraEdgeLength*stickerOffset,layer,tetraHeight*(i),240,-19.4,300,"yellow","corner",upSideDown,"up",1);
-            triangleMesh(scale,-tetraEdgeLength*stickerOffset-(-tetraEdgeLength*(stickersPerRow*.5-.5))/2,i-1-layer*.5,tetraHeight,0,90,0,"green","corner",upSideDown,"up",1);
+
+            // corners (3 stickers)
+            if(
+                (i === segments && j === stickersPerRow) || 
+                (i === 1 && j === 1) || 
+                (i===1 && j===stickersPerRow) ||
+                (i===segments && j===1)
+            ){
+                triangleMesh(scale,-tetraEdgeLength*stickerOffset,layer,tetraHeight*(i),0,-19.4,300,"blue","corner",upSideDown,"up",1);
+                triangleMesh(scale,-tetraEdgeLength*stickerOffset,layer,tetraHeight*(i),120,-19.4,300,"red","corner",upSideDown,"up",1);
+                triangleMesh(scale,-tetraEdgeLength*stickerOffset,layer,tetraHeight*(i),240,-19.4,300,"yellow","corner",upSideDown,"up",1);
+                triangleMesh(scale,-tetraEdgeLength*stickerOffset-(-tetraEdgeLength*(stickersPerRow*.5-.5))/2,i-1-layer*.5,tetraHeight,0,90,0,"green","corner",upSideDown,"up",1);
+            }
+            // edges (2 stickers)
+            else if(
+                // (i === 1 && j < stickersPerRow) ||
+                // (i === 1 && j > 1) ||
+                (i > 1 && j === 1) || 
+                (i < segments && j===stickersPerRow) ||
+                (i===1 && !upSideDown)
+                ){
+                // console.log(corner);
+                triangleMesh(scale,-tetraEdgeLength*stickerOffset,layer,tetraHeight*(i),0,-19.4,300,"blue","edge",upSideDown,"up",1);
+                triangleMesh(scale,-tetraEdgeLength*stickerOffset,layer,tetraHeight*(i),120,-19.4,300,"red","edge",upSideDown,"up",1);
+                triangleMesh(scale,-tetraEdgeLength*stickerOffset,layer,tetraHeight*(i),240,-19.4,300,"yellow","edge",upSideDown,"up",1);
+                triangleMesh(scale,-tetraEdgeLength*stickerOffset-(-tetraEdgeLength*(stickersPerRow*.5-.5))/2,i-1-layer*.5,tetraHeight,0,90,0,"green","edge",upSideDown,"up",1);
+            }
+            // middle (1 sticker)
+            else {
+                triangleMesh(scale,-tetraEdgeLength*stickerOffset,layer,tetraHeight*(i),0,-19.4,300,"blue","middle",upSideDown,"up",1);
+                triangleMesh(scale,-tetraEdgeLength*stickerOffset,layer,tetraHeight*(i),120,-19.4,300,"red","middle",upSideDown,"up",1);
+                triangleMesh(scale,-tetraEdgeLength*stickerOffset,layer,tetraHeight*(i),240,-19.4,300,"yellow","middle",upSideDown,"up",1);
+                triangleMesh(scale,-tetraEdgeLength*stickerOffset-(-tetraEdgeLength*(stickersPerRow*.5-.5))/2,i-1-layer*.5,tetraHeight,0,90,0,"green","middle",upSideDown,"up",1);
+            }
         }
     }
 
