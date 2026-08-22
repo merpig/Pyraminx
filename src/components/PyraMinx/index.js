@@ -10,7 +10,7 @@ import { seededRandom } from "three/src/math/MathUtils.js";
 
 const PyraMinx = ({reset}) => {
     // Added csc to Math library
-    const segments = 5;
+    const segments = 15;
     const scale = 3/segments;
     const triangleHeight = 1.5*scale;
     const tetraEdgeLength = 1.732*scale;
@@ -383,9 +383,12 @@ const PyraMinx = ({reset}) => {
 
             // corners (3 stickers)
             if(
-                (i === segments && j === stickersPerRow) || 
-                (i === 1 && j === 1) || 
-                (i===1 && j===stickersPerRow) ||
+                (i === segments && j === stickersPerRow) 
+                || 
+                (i === 1 && j === 1) 
+                || 
+                (i===1 && j===stickersPerRow) 
+                ||
                 (i===segments && j===1)
             ){
                 triangleMesh(scale,-tetraEdgeLength*stickerOffset,layer,tetraHeight*(i),0,-19.4,300,"blue","corner",upSideDown,"up",1);
@@ -395,8 +398,6 @@ const PyraMinx = ({reset}) => {
             }
             // edges (2 stickers)
             else if(
-                // (i === 1 && j < stickersPerRow) ||
-                // (i === 1 && j > 1) ||
                 (i > 1 && j === 1) || 
                 (i < segments && j===stickersPerRow) ||
                 (i===1 && !upSideDown)
